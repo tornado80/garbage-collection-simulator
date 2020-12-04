@@ -106,6 +106,7 @@ class Memory:
             if not moving_backward:
                 self.__set_node_tag(cur, True)
                 if self.get_node_down(cur) is not None and self.get_node_down(self.get_node_down(cur)) != cur:
+                    print("(", end="")
                     if not ladder_used:
                         # Store cur next node in temp to set in label.
                         # Useful when moving backward. This is only used when not in ladder mode
@@ -136,6 +137,7 @@ class Memory:
                     prev = None
                 else:
                     # Simple moving next with reversing pointers
+                    print(self.get_node_label(cur), end="")
                     temp = self.get_node_next(cur)
                     self.set_node_next(cur, prev)
                     prev = cur
@@ -148,6 +150,7 @@ class Memory:
                 cur = temp
                 # Check if we have finished moving backward
                 if cur is None:
+                    print(")", end="")
                     moving_backward = False
                     # Now check if we have no child using that loop trick
                     if self.get_node_down(self.get_node_down(prev)) == prev:
@@ -173,7 +176,7 @@ class Memory:
                         prev = cur
                         cur = temp
                         self.set_node_next(prev, None)
-
+        print()
 
 class Stack:
     def __init__(self, memory: Memory):
