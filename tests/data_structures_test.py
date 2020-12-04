@@ -4,7 +4,7 @@ from garbage_collection_simulator.data_structures import Memory, NotEnoughMemory
 
 
 class MemoryTest(unittest.TestCase):
-    def test_init_avail_list(self):
+    def test_status(self):
         memory = Memory(4)
         self.assertEqual(
             memory.status(),

@@ -19,8 +19,8 @@ class Memory:
         self.__init_avail_list()
 
     def __init_avail_list(self):
-        for i in range(0, 4 * (self.__size - 1), 4):
-            self.set_node_next(i, i + 4)
+        for i in range(self.__size - 1):
+            self.set_node_next(i * 4, i * 4 + 4)
 
     def allocate_node(self, new_label = None, new_down = None, new_next = None):
         if self.__avail_list_head is None:
@@ -82,8 +82,76 @@ class Memory:
             ]
         )
 
-    def garbage_collect(self, *roots_list):
-        pass
+    def garbage_collect(self, *lists_roots):
+        # mark all as garbage
+        for i in range(self.__size):
+            self.__set_node_tag(i * 4, False)
+        # mark accessible nodes
+        for list_root in lists_roots:
+            self.__patrol_list_and_mark_tags(list_root)
+        # sweep garbage nodes
+        for i in range(self.__size):
+            if not self.__get_node_tag(i * 4):
+                self.free_node(i * 4)
+
+    def __traverse_list_and_mark_tags(self, list_root):
+        cur = list_root
+        prev = None
+        moving_backward = False
+        while cur != list_root or not moving_backward:
+            if cur is None:
+                prev, cur = cur, prev
+                moving_backward = True
+                continue
+            if not moving_backward:
+                self.__set_node_tag(cur, True)
+                if self.get_node_down(cur) is not None:
+                    # Store cur next node in temp to set in label. Useful when moving backward
+                    temp = self.get_node_next(cur)
+                    # Reverse pointer between cur and prev
+                    self.set_node_next(cur, prev)
+                    # Set this label to find the right next node after cur when moving backward
+                    self.set_node_label(cur, temp)
+                    # Get the down node
+                    down_node = self.get_node_down(cur)
+                    if self.get_node_down(down_node) is not None:
+                        # Since these nodes are pointers to other lists, we can play with these nodes' labels.
+                        # When moving backward we use this label to access parent node
+                        self.set_node_label(down_node, cur)
+                    else:
+                        # This is a node with no child so we can't play with label.
+                        # But its down pointer is None. So by setting this to the parent node we have a loop.
+                        # We can detect this loop when moving backwards. So we can identify this node.
+                        self.set_node_down(down_node, cur)
+                    cur = down_node
+                    prev = None
+                else:
+                    # Simple moving next with reversing pointers
+                    temp = self.get_node_next(cur)
+                    self.set_node_next(cur, prev)
+                    prev = cur
+                    cur = temp
+            else:
+                # Simple moving backward (actually next)
+                temp = self.get_node_next(cur)
+                self.set_node_next(cur, prev)
+                prev = cur
+                cur = temp
+                # Check if we have finished moving backward
+                if cur is None:
+                    moving_backward = False
+                    # Now check if we have no child using that loop trick
+                    if self.get_node_down(self.get_node_down(prev)) == prev:
+                        # we have no child so we get father from down field
+                        cur = self.get_node_down(prev)
+                        self.set_node_down(prev, None)
+                    else:
+                        # we have child so we get the father from label
+                        cur = self.get_node_label(prev)
+                    # Find next node from label
+                    temp = self.get_node_label(cur)
+                    prev = cur
+                    cur = temp
 
 
 class Stack:
