@@ -88,41 +88,50 @@ class Memory:
             self.__set_node_tag(i * 4, False)
         # mark accessible nodes
         for list_root in lists_roots:
-            self.__patrol_list_and_mark_tags(list_root)
+            self.__traverse_list_and_mark_tags(list_root)
         # sweep garbage nodes
         for i in range(self.__size):
             if not self.__get_node_tag(i * 4):
                 self.free_node(i * 4)
 
     def __traverse_list_and_mark_tags(self, list_root):
-        cur = list_root
+        cur = list_root.root
         prev = None
         moving_backward = False
-        while cur != list_root or not moving_backward:
+        ladder_used = False
+        while True:
             if cur is None:
                 prev, cur = cur, prev
                 moving_backward = True
-                continue
             if not moving_backward:
                 self.__set_node_tag(cur, True)
-                if self.get_node_down(cur) is not None:
-                    # Store cur next node in temp to set in label. Useful when moving backward
-                    temp = self.get_node_next(cur)
-                    # Reverse pointer between cur and prev
-                    self.set_node_next(cur, prev)
-                    # Set this label to find the right next node after cur when moving backward
-                    self.set_node_label(cur, temp)
+                if self.get_node_down(cur) is not None and self.get_node_down(self.get_node_down(cur)) != cur:
+                    if not ladder_used:
+                        # Store cur next node in temp to set in label.
+                        # Useful when moving backward. This is only used when not in ladder mode
+                        temp = self.get_node_next(cur)
+                        # Reverse pointer between cur and prev
+                        self.set_node_next(cur, prev)                        
+                        # Set this label to find the right next node after cur when moving backward.
+                        # This is only used when not in ladder mode
+                        self.set_node_label(cur, temp)
                     # Get the down node
                     down_node = self.get_node_down(cur)
                     if self.get_node_down(down_node) is not None:
                         # Since these nodes are pointers to other lists, we can play with these nodes' labels.
                         # When moving backward we use this label to access parent node
                         self.set_node_label(down_node, cur)
+                        # Nodes which are placed on top of each other are ladder.
+                        # When moving with down pointer, we have to set ladder used.
+                        ladder_used = True
                     else:
                         # This is a node with no child so we can't play with label.
                         # But its down pointer is None. So by setting this to the parent node we have a loop.
                         # We can detect this loop when moving backwards. So we can identify this node.
                         self.set_node_down(down_node, cur)
+                        # When moving with down pointer, we have to set ladder used.
+                        # But here the node below us does not have a child
+                        ladder_used = False
                     cur = down_node
                     prev = None
                 else:
@@ -149,9 +158,21 @@ class Memory:
                         # we have child so we get the father from label
                         cur = self.get_node_label(prev)
                     # Find next node from label
-                    temp = self.get_node_label(cur)
-                    prev = cur
-                    cur = temp
+                    if cur == list_root.root:
+                        break
+                    if self.get_node_label(cur) is None:  # top ladder node
+                        temp = self.get_node_label(cur)                      
+                        prev = cur
+                        cur = temp                        
+                    elif self.get_node_down(self.get_node_label(cur)) != cur:  # top ladder node
+                        temp = self.get_node_label(cur)
+                        prev = cur
+                        cur = temp                                               
+                    else:  # we need to move next
+                        temp = self.get_node_next(cur)
+                        prev = cur
+                        cur = temp
+                        self.set_node_next(prev, None)
 
 
 class Stack:
@@ -182,7 +203,7 @@ class Stack:
 class GeneralList:
     def __init__(self, memory, root):
         self.__memory = memory
-        self.__root = root
+        self.root = root
 
     @classmethod
     def convert_expression_to_general_list(cls, memory: Memory, expression: str):
@@ -216,7 +237,7 @@ class GeneralList:
         return first_node, idx
 
     def find_node_by_expression(self, node_expression):
-        ptr = self.__root
+        ptr = self.root
         for ch in node_expression[:-1]:
             if ch == "(":
                 ptr = self.__memory.get_node_down(ptr)
@@ -227,7 +248,7 @@ class GeneralList:
     def __str__(self):
         result = []
         stack = Stack(self.__memory)
-        stack.push(self.__root)
+        stack.push(self.root)
         reached_end = False
         while not stack.is_empty():
             top = stack.top()

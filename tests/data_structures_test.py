@@ -94,6 +94,21 @@ class GeneralListTest(unittest.TestCase):
         result_list = GeneralList.convert_expression_to_general_list(memory, "(a(b(c)d)ef(g)((i)h))")
         self.assertEqual(str(result_list), "(a(b(c)d)ef(g)((i)h))")
 
+    def test_garbage_collection(self):
+        memory = Memory(70)
+        result_list = GeneralList.convert_expression_to_general_list(memory, "(a(b(c)d)e(AB(((F)E(H))C(D)))f(g)((i)h))")
+        result_list2 = GeneralList.convert_expression_to_general_list(memory, "(xyzt(w(y(1(2)))))")
+        result_list3 = GeneralList.convert_expression_to_general_list(memory, "(((MN)PQ)RS)")
+        node, _ = result_list.find_node_by_expression("(***(***")
+        node2, _ = result_list2.find_node_by_expression("(****(**")
+        memory.set_node_label(node, "X")
+        memory.set_node_down(node, None)
+        memory.set_node_label(node2, "O")
+        memory.set_node_down(node2, None)
+        memory.garbage_collect(result_list, result_list2, result_list3)
+        print(result_list, result_list2, result_list3)
+        print(memory)
+
     def test_find_node_by_expression(self):
         memory = Memory(100)
         result_list = GeneralList.convert_expression_to_general_list(memory, "(a(b(c)d)ef(g)((i)h))")
