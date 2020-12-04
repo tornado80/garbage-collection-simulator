@@ -4,7 +4,7 @@ from garbage_collection_simulator.data_structures import Memory, NotEnoughMemory
 
 
 class MemoryTest(unittest.TestCase):
-    def test__init_avail_list(self):
+    def test_init_avail_list(self):
         memory = Memory(4)
         self.assertEqual(
             memory.status(),
@@ -90,9 +90,12 @@ class StackTest(unittest.TestCase):
 
 class GeneralListTest(unittest.TestCase):
     def test_convert_expression_to_general_list(self):
-        memory = Memory(30)
-        result_list = GeneralList.convert_expression_to_general_list(memory, "(a(b(c)d)ef(g)((i)h))")
-        self.assertEqual(str(result_list), "(a(b(c)d)ef(g)((i)h))")
+        memory = Memory(100)
+        result_list = GeneralList.convert_expression_to_general_list(memory, "()")
+        self.assertEqual(str(result_list), "()") # ((a(b(c)d)ef(g)((i)h)))
+
+    def test_find_node_by_expression(self):
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':
