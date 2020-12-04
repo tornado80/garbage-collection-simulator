@@ -148,7 +148,13 @@ class GeneralList:
         return first_node, idx
 
     def find_node_by_expression(self, node_expression):
-        pass
+        ptr = self.__root
+        for ch in node_expression[:-1]:
+            if ch == "(":
+                ptr = self.__memory.get_node_down(ptr)
+            else:
+                ptr = self.__memory.get_node_next(ptr)
+        return ptr, self.__memory.get_node_label(ptr)
 
     def __str__(self):
         result = []

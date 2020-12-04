@@ -95,7 +95,10 @@ class GeneralListTest(unittest.TestCase):
         self.assertEqual(str(result_list), "(a(b(c)d)ef(g)((i)h))")
 
     def test_find_node_by_expression(self):
-        self.assertTrue(True)
+        memory = Memory(100)
+        result_list = GeneralList.convert_expression_to_general_list(memory, "(a(b(c)d)ef(g)((i)h))")
+        _, actual = result_list.find_node_by_expression("(*(*(*")
+        self.assertEqual(actual, "c")
 
 
 if __name__ == '__main__':
