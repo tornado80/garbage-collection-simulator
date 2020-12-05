@@ -44,12 +44,28 @@ def garbage_collect_command(memory: Memory, variables: dict):
     memory.garbage_collect(*variables.values())
 
 
+def set_node_label_command(var_name1: str, node_expression: str, label: str, memory: Memory, variables: dict):
+    list1 = variables[var_name1]
+    node, _ = list1.find_node_by_expression(node_expression)
+    memory.set_node_label(node, label)
+
+
 def assignment_command(var_name: str, list_expression: str, memory: Memory, variables: dict):
     variables[var_name] = GeneralList.convert_expression_to_general_list(memory, list_expression)
 
 
+def assignment_between_variables_command(var_name1: str, var_name2: str, variables: dict):
+    variables[var_name1] = variables[var_name2]
+
+
 class UndefinedSequenceError(SyntaxError):
     pass
+
+
+def is_node_label_valid(node_label: str):
+    if len(node_label) == 1 and 33 <= ord(node_label[0]) <= 126:
+        return True
+    return False
 
 
 def is_variable_name_valid(name: str) -> bool:
@@ -126,6 +142,19 @@ class Interpreter:
                 }
             }
         },
+        "Set": {
+            "$VAR_NAME": {
+                "at": {
+                    "$NODE_EXPRESSION": {
+                        "Label": {
+                            "to": {
+                                "$NODE_LABEL": (set_node_label_command, True, True)
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "Delete": {
             "$VAR_NAME": {
                 "from": {
@@ -139,7 +168,8 @@ class Interpreter:
         "Garbage-Collect": (garbage_collect_command, True, True),
         "$VAR_NAME": {
             "=": {
-                "$LIST_EXPRESSION": (assignment_command, True, True)
+                "$LIST_EXPRESSION": (assignment_command, True, True),
+                "$VAR_NAME": (assignment_between_variables_command, False, True)
             }
         }
     }
@@ -147,6 +177,7 @@ class Interpreter:
         "$VAR_NAME": is_variable_name_valid,
         "$NODE_EXPRESSION": is_node_expression_valid,
         "$LIST_EXPRESSION": is_list_expression_valid,
+        "$NODE_LABEL": is_node_label_valid
     }
 
     def __init__(self, memory_size):
@@ -174,9 +205,11 @@ class Interpreter:
                     raise SyntaxError(f"Expected one of following valid terms: {d.keys()}, got {word}.")
             else:
                 d = d[word]  # going deeper in the syntax tree
-            if isinstance(d, tuple):  # d is the function
-                if d[1]:
-                    kwargs["memory"] = self.__memory
-                if d[2]:
-                    kwargs["variables"] = self.__variables
-                d[0](*args, **kwargs)  # execute command
+        if isinstance(d, tuple):  # d is the function
+            if d[1]:
+                kwargs["memory"] = self.__memory
+            if d[2]:
+                kwargs["variables"] = self.__variables
+            d[0](*args, **kwargs)  # execute command
+        else:
+            raise SyntaxError(f"Expected one of following valid terms: {d.keys()}, got nothing.")
