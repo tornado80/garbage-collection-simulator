@@ -83,6 +83,7 @@ class Memory:
         )
 
     def garbage_collect(self, *lists_roots):
+        print("Starting Garbage Collection")
         # mark all as garbage
         for i in range(self.__size):
             self.__set_node_tag(i * 4, False)
@@ -93,12 +94,14 @@ class Memory:
         for i in range(self.__size):
             if not self.__get_node_tag(i * 4):
                 self.free_node(i * 4)
+        print("Finished Garbage Collection")
 
     def __traverse_list_and_mark_tags(self, list_root):
         cur = list_root.root
         prev = None
         moving_backward = False
         ladder_used = False
+        print("list traversed: ", end="")
         while True:
             if cur is None:
                 prev, cur = cur, prev
@@ -177,6 +180,7 @@ class Memory:
                         cur = temp
                         self.set_node_next(prev, None)
         print()
+
 
 class Stack:
     def __init__(self, memory: Memory):
@@ -263,7 +267,8 @@ class GeneralList:
                     stack.push(self.__memory.get_node_next(top))
                 continue
             if self.__memory.get_node_down(top) is None:
-                result.append(self.__memory.get_node_label(top))
+                label = self.__memory.get_node_label(top)
+                result.append("" if label is None else label)
                 stack.pop()
                 if self.__memory.get_node_next(top) is None:
                     reached_end = True
