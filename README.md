@@ -9,7 +9,7 @@ First one is `-h` or `--help` which brings up the help menu.
 
 Second one is `-i` or `--interactive-shell`. 
 With this option you can enter the interactive shell and key in as many commands as you want and see their instant execution result.
-It is so much like the Python interactive shell. You can also track exceptions too. 
+It is so much like the Python native interactive shell. You can also track exceptions too. 
 
 Third command line option is `-x` or `--execute`. With this option you can execute a file containing the commands of the language.
 
@@ -49,15 +49,15 @@ python3 main.py -x -m 100 /path/to/file
 3. Garbage collector function prints the traversed lists, which are marked as not garbage, so you can track the garbage nodes easily.
 ## Examples
 Numbers are corresponding to commands cited above:
-1. `Print Salam`
+1. `Salam = salam_beto2`
 2. `salam_beto2 = (ABC(D(F))G(H))`
-3. `Salam = salam_beto2`
-4. `Delete salam_beto2 from (***(**`
-5. `Garbage-Collect`
-6. `Make Salam Child of salam_beto2 at (***(* With Root`
-7. `Make Salam Child of salam_beto2 at (***(* Without Root`
-8. `Make (PQ(R(T))S) Child of salam_beto2 at (***(* With Root`
-9. `Make (PQ(R(T))S) Child of salam_beto2 at (***(* Without Root`
+3. `Print Salam`
+4. `Garbage-Collect`
+5. `Make Salam Child of salam_beto2 at (***(* With Root`
+6. `Make Salam Child of salam_beto2 at (***(* Without Root`
+7. `Make (PQ(R(T))S) Child of salam_beto2 at (***(* With Root`
+8. `Make (PQ(R(T))S) Child of salam_beto2 at (***(* Without Root`
+9. `Delete salam_beto2 from (***(**`
 10. `Set Label of salam_beto2 at (** to K`
 
 More examples are available in unittests written for the project in `tests` directory. 
