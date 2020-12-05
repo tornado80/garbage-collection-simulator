@@ -8,7 +8,7 @@ def show_help():
         Following options are supported:
             -x /path/to/file or --execute /path/to/file
             -i or --interactive-shell
-        Note that after execution and interactive shell options should be followed by the memory size option like below:
+        Note that execution and interactive shell options should be followed by the memory size option like below:
             -m NUM or --memory-size=NUM
         Thus a complete command would be look like:
             "$ python3 main.py -x -m 200 hello.txt"
@@ -107,6 +107,7 @@ def execute_file():
         lines = file.readlines()
         file.close()
         interpreter = Interpreter(memory_size)
+
         for line in lines:
             interpreter.execute_command(line[:-1])  # removing \n
     except IndexError:

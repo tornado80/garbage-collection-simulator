@@ -143,6 +143,19 @@ class Interpreter:
             }
         },
         "Set": {
+            "Label": {
+                "of": {
+                    "$VAR_NAME": {
+                        "at": {
+                            "$NODE_EXPRESSION": {
+                                "to": {
+                                    "$NODE_LABEL": (set_node_label_command, True, True)
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "$VAR_NAME": {
                 "at": {
                     "$NODE_EXPRESSION": {

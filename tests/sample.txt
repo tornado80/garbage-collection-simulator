@@ -5,7 +5,7 @@ Print B
 Make (XY(Z)(T(J))) Child of B at ((**(* Without Root
 Delete A from (**
 Make (K) Child of A at (** Without Root
-Set A at (*(* Label to @
+Set Label of A at (*(* to @
 Print A
 Print B
 Garbage-Collect
