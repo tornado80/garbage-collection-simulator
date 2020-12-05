@@ -1,0 +1,13 @@
+A = (a(b(c)d)ef(g)((i)h))
+B = ((MN(P))Q(R)(ST(U)))
+Print A
+Print B
+Make (XY(Z)(T(J))) Child of B at ((**(* Without Root
+Delete A from (**
+Make (K) Child of A at (** Without Root
+Set A at (*(* Label to @
+Print A
+Print B
+Garbage-Collect
+Print A
+Print B
