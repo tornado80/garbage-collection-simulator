@@ -22,7 +22,7 @@ python3 main.py -i -m 200
 ```
 which initializes an interpreter with 200 free nodes or 800 cells. Or:
 ```
-python3 main.py -x -m 100 /path/to/file
+python3 main.py -x -m 100 tests/sample.txt
 ```
 
 ## Definitions
@@ -61,7 +61,7 @@ Numbers are corresponding to commands cited above:
 10. `Set Label of salam_beto2 at (** to K`
 
 More examples are available in unittests written for the project in `tests` directory. 
-You can see a sample file containing commands too.
+You can see a sample file called `sample.txt` containing commands too.
 Don't remember to use the interactive shell to play with the simulator.
 
 ## Implementation

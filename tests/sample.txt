@@ -5,6 +5,10 @@ Print B
 Make (XY(Z)(T(J))) Child of B at ((**(* Without Root
 Delete A from (**
 Make (K) Child of A at (** Without Root
+C = (R(TY(J))F)
+Make C Child of A at (*****(** Without Root
+Print C
+C = B
 Set Label of A at (*(* to @
 Print A
 Print B
