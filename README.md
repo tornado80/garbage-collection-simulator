@@ -63,3 +63,37 @@ Numbers are corresponding to commands cited above:
 More examples are available in unittests written for the project in `tests` directory. 
 You can see a sample file containing commands too.
 Don't remember to use the interactive shell to play with the simulator.
+
+## Implementation
+Memory cells are grouped four by four such that each group represents a node. Thus nodes have 4 fields:
+1. Next: An integer is used to store the next node address.
+2. Down: An integer is used to store the down node address.
+3. Tag: A boolean (True or False) which is only used in garbage collection to mark traversed lists nodes and then sweep the garbage nodes.
+4. Label: It is the value stored in the node and could be anything but mostly for beautiful printing a single character.
+Label is valuable for nodes which don't have children. For other nodes (those who have children), we use it in garbage collection to store father's node address.
+In cases in which the node does not have a father, we use it for storing address of the next node:
+For example, in situation below, after reversing pointers in garbage collection we miss the next value of `B`, so we store address of `D` int the label of node `B`. 
+```
+A -> B -> D                                A <- B   D
+     |          in Garbage Collection:          |
+     C                                          C
+```
+Otherwise we use label to store the father node address: For example, here we change the label of node `B` to point to node `A`. (This is called a ladder of nodes in code)
+```
+A -> ...
+|
+B -> ...
+|
+C -> ...
+```
+It is note worthy to say that in this implementation we don't change `down` fields except in cases like node `C` for which `label` is valuable and only its `down` field could be used. (For node `C` we set the down field to `B` thus a loop is created and we can detect this loop when traversing backward in list. This pointer helps us to find the father node too).
+
+Also in our implementation for general lists we create a root node which its down field points to the first node of list. In such way most actions in printing, node expression, and list expression analysis are automated without handling the beginning open parenthesis (`(`) or trailing close parenthesis (`)`). 
+For example a list like `(A(D)B)` is stored as:
+```
+root
+|
+A -> X -> B
+     |
+     D
+```
